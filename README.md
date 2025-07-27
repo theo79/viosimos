@@ -38,11 +38,17 @@
 ## Project Structure
 
 index.html - Main page
+
 energy.html - Electricity tracking
+
 gas.html - Gas tracking
+
 style.css - Stylesheet
+
 viosimos.png - Logo image
+
 license.txt - License (CC BY-NC 4.0)
+
 README.md - This file
 
 
