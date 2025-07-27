@@ -1,6 +1,7 @@
 <p align="center">
   <img src="viosimos.png" alt="Viosimos Logo" width="150" />
 </p>
+
 # Viosimos - Βιώσιμος (Sustainable)
 
 **Viosimos** (Βιώσιμος in Greek, meaning *Sustainable*) is a simple, client-side web application designed to help users track their energy (electricity) and gas consumption. It provides an intuitive interface to input meter readings, calculate usage and costs over time, visualize trends with charts, and manage data through local browser storage and file export/import.
@@ -42,8 +43,7 @@ viosimos/
 ├── viosimos.png      # Application logo
 ├── license.txt       # License file (CC BY-NC 4.0)
 └── README.md         # This file
-
-
+```
 
 Technologies Used
 
@@ -57,7 +57,7 @@ Technologies Used
 
     LocalForage – Asynchronous client-side storage abstraction
 
-💡 Future Improvements
+    Future Improvements
 
     User Authentication and cloud data storage for multi-device sync and backup
 
@@ -73,17 +73,11 @@ Technologies Used
 
 📄 License
 
-This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0).
+This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0). 
 See license.txt for full details.
 
 👤 Author
+
 Theocharis Anastopoulos © 2025
 
-🖼️ Screenshots
-<img src="screenshot1.png" alt="Screenshot 1" width="200"/>
-<img src="screenshot2.png" alt="Screenshot 2" width="200"/>
-<img src="screenshot3.png" alt="Screenshot 3" width="200"/>
-<img src="screenshot4.png" alt="Screenshot 4" width="200"/> </p>
-
-Thank you for using Viosimos — making energy and gas consumption sustainable, one meter reading at a time!
 
