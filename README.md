@@ -80,10 +80,10 @@ See license.txt for full details.
 Theocharis Anastopoulos © 2025
 
 🖼️ Screenshots
-<img src="screenshot1.png" alt="Screenshot 1" width="200" style="margin-right:10px;" />
-<img src="screenshot2.png" alt="Screenshot 2" width="200" style="margin-right:10px;" />
-<img src="screenshot3.png" alt="Screenshot 3" width="200" style="margin-right:10px;" />
-<img src="screenshot4.png" alt="Screenshot 4" width="200" /> </p>
+<img src="screenshot1.png" alt="Screenshot 1" width="200"/>
+<img src="screenshot2.png" alt="Screenshot 2" width="200"/>
+<img src="screenshot3.png" alt="Screenshot 3" width="200"/>
+<img src="screenshot4.png" alt="Screenshot 4" width="200"/> </p>
 
 Thank you for using Viosimos — making energy and gas consumption sustainable, one meter reading at a time!
 
