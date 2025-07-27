@@ -1,3 +1,4 @@
+# ![Viosimos Logo](viosimos.png) 
 # Viosimos - Βιώσιμος (Sustainable)
 
 **Viosimos** (Βιώσιμος in Greek, meaning *Sustainable*) is a simple, client-side web application designed to help users track their energy (electricity) and gas consumption. It provides an intuitive interface to input meter readings, calculate usage and costs over time, visualize trends with charts, and manage data through local browser storage and file export/import.
