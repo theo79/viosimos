@@ -42,6 +42,9 @@ viosimos/
 ├── viosimos.png      # Application logo
 ├── license.txt       # License file (CC BY-NC 4.0)
 └── README.md         # This file
+
+
+
 Technologies Used
 
     HTML5 – Structure and content of the web pages
@@ -70,12 +73,17 @@ Technologies Used
 
 📄 License
 
-This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0). See license.txt for full details.
-👤 Author
+This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0).
+See license.txt for full details.
 
+👤 Author
 Theocharis Anastopoulos © 2025
+
 🖼️ Screenshots
-<p align="center"> <img src="screenshot1.png" alt="Screenshot 1" width="200" style="margin-right:10px;" /> <img src="screenshot2.png" alt="Screenshot 2" width="200" style="margin-right:10px;" /> <img src="screenshot3.png" alt="Screenshot 3" width="200" style="margin-right:10px;" /> <img src="screenshot4.png" alt="Screenshot 4" width="200" /> </p>
+<img src="screenshot1.png" alt="Screenshot 1" width="200" style="margin-right:10px;" />
+<img src="screenshot2.png" alt="Screenshot 2" width="200" style="margin-right:10px;" />
+<img src="screenshot3.png" alt="Screenshot 3" width="200" style="margin-right:10px;" />
+<img src="screenshot4.png" alt="Screenshot 4" width="200" /> </p>
 
 Thank you for using Viosimos — making energy and gas consumption sustainable, one meter reading at a time!
 
