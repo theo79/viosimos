@@ -10,13 +10,25 @@
 
 ## Features
 
-- Track electricity and gas meter readings, tariffs, and dates
-- Auto calculate usage and costs between readings
-- Interactive charts using Chart.js
-- Data saved in browser local storage (LocalForage)
-- Export/Import CSV and JSON backups
-- Responsive design for all devices
-- Clean, easy-to-use interface
+-- Track electricity, gas, and water meter readings, tariffs, and dates
+
+-- Auto calculate usage and costs between readings
+
+-- Dashboard overview combining all utilities
+
+-- Monthly summaries for usage and costs
+
+-- Interactive charts using Chart.js
+
+-- PDF report export from the dashboard
+
+-- Data saved in browser local storage (LocalForage)
+
+-- Export/Import CSV and JSON backups
+
+-- Responsive design for all devices
+
+-- Clean, easy-to-use interface
 
 ---
 
@@ -37,19 +49,15 @@
 
 ## Project Structure
 
-index.html - Main page
-
-energy.html - Electricity tracking
-
-gas.html - Gas tracking
-
-style.css - Stylesheet
-
-viosimos.png - Logo image
-
-license.txt - License (CC BY-NC 4.0)
-
-README.md - This file
+index.html       - Home page
+dashboard.html   - Combined utilities dashboard
+energy.html      - Electricity tracking
+gas.html         - Gas tracking
+water.html       - Water tracking
+style.css        - Stylesheet
+viosimos.png     - Logo image
+license.txt      - License (CC BY-NC 4.0)
+README.md        - This file
 
 
 ---
@@ -67,7 +75,6 @@ README.md - This file
 ## Future Improvements
 
 - User accounts and cloud sync  
-- Monthly/Annual reports  
 - Cost projections  
 - Meter reading reminders  
 - Multi-currency support  
