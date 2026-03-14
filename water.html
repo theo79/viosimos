@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Viosimos - Energy Input</title>
+  <title>Viosimos - Water Input</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js"></script>
@@ -218,27 +218,27 @@
 
   <main>
     <div class="title-bar">
-      <h2>Energy Input</h2>
-        <div class="nav-buttons" aria-label="Page navigation">
-          <a class="nav-btn" href="index.html">Home</a>
-          <a class="nav-btn" href="dashboard.html">Dashboard</a>
-          <a class="nav-btn active" href="energy.html" aria-current="page">Energy</a>
-          <a class="nav-btn" href="gas.html">Gas</a>
-          <a class="nav-btn" href="water.html">Water</a>
-        </div>
+      <h2>Water Input</h2>
+      <div class="nav-buttons" aria-label="Page navigation">
+        <a class="nav-btn" href="index.html">Home</a>
+        <a class="nav-btn" href="dashboard.html">Dashboard</a>
+        <a class="nav-btn" href="energy.html">Energy</a>
+        <a class="nav-btn" href="gas.html">Gas</a>
+        <a class="nav-btn active" href="water.html" aria-current="page">Water</a>
+      </div>
     </div>
 
-    <form id="energyForm">
+    <form id="waterForm">
       <div>
         <label for="location">Location</label>
         <input type="text" id="location" required />
       </div>
       <div>
-        <label for="meterReading">Meter Reading (kWh)</label>
+        <label for="meterReading">Meter Reading (m³)</label>
         <input type="number" id="meterReading" min="0" step="any" required />
       </div>
       <div>
-        <label for="tariff">Tariff (€/kWh)</label>
+        <label for="tariff">Tariff (€/m³)</label>
         <input type="number" id="tariff" min="0" step="0.0001" required />
       </div>
       <div>
@@ -254,14 +254,14 @@
         <input type="file" id="importFileInput" accept=".json" style="display: none;">
     </div>
 
-    <table id="energyTable" aria-label="Energy data table">
+    <table id="waterTable" aria-label="Water data table">
       <thead>
         <tr>
           <th>Location</th>
-          <th>Meter Reading (kWh)</th>
-          <th>Tariff (€/kWh)</th>
+          <th>Meter Reading (m³)</th>
+          <th>Tariff (€/m³)</th>
           <th>Date</th>
-          <th>Usage (kWh)</th>
+          <th>Usage (m³)</th>
           <th>Cost (€)</th>
           <th>Actions</th>
         </tr>
@@ -280,10 +280,10 @@
 
     <div class="charts">
       <div class="chart-container">
-        <canvas id="usageChart" aria-label="Energy Usage Chart" role="img"></canvas>
+        <canvas id="usageChart" aria-label="Water Usage Chart" role="img"></canvas>
       </div>
       <div class="chart-container">
-        <canvas id="costChart" aria-label="Energy Cost Chart" role="img"></canvas>
+        <canvas id="costChart" aria-label="Water Cost Chart" role="img"></canvas>
       </div>
     </div>
   </main>
@@ -306,10 +306,10 @@
   </div>
 
   <script>
-    const STORAGE_KEY = 'viosimos_energy_entries';
+    const STORAGE_KEY = 'viosimos_water_entries';
 
-    const form = document.getElementById('energyForm');
-    const tbody = document.querySelector('#energyTable tbody');
+    const form = document.getElementById('waterForm');
+    const tbody = document.querySelector('#waterTable tbody');
     const totalDaysEl = document.getElementById('totalDays');
     const totalCostEl = document.getElementById('totalCost');
     const submitBtn = document.getElementById('submitBtn');
@@ -376,7 +376,7 @@
         data: {
           labels: [],
           datasets: [{
-            label: 'Energy Usage (kWh)',
+            label: 'Water Usage (m³)',
             data: [],
             borderColor: '#4caf50',
             backgroundColor: 'rgba(76,175,80,0.2)',
@@ -393,7 +393,7 @@
             legend: { display: true },
             title: {
                 display: true,
-                text: 'Energy Usage Over Time'
+                text: 'Water Usage Over Time'
             }
           }
         }
@@ -421,7 +421,7 @@
             legend: { display: true },
             title: {
                 display: true,
-                text: 'Energy Cost Over Time'
+                text: 'Water Cost Over Time'
             }
           }
         }
@@ -594,7 +594,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `viosimos_energy_data_${new Date().toISOString().slice(0,10)}.csv`;
+      a.download = `viosimos_water_data_${new Date().toISOString().slice(0,10)}.csv`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -615,7 +615,7 @@
 
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'viosimos_energy_data.json'; // Specific filename for energy
+        a.download = 'viosimos_water_data.json';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -722,3 +722,5 @@
   </script>
 </body>
 </html>
+
+

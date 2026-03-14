@@ -34,6 +34,55 @@ main h2 {
   color: #388e3c; /* medium green */
 }
 
+.title-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.title-bar h2 {
+  margin: 0;
+  color: #1b5e20;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.nav-btn {
+  padding: 8px 14px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  font-size: 0.9em;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.nav-btn:hover {
+  background-color: #388e3c;
+}
+
+.nav-btn.active {
+  background-color: #1b5e20;
+  cursor: default;
+  opacity: 0.9;
+}
+
+.nav-btn.active:hover {
+  background-color: #1b5e20;
+}
+
 .index-buttons {
   margin: 20px;
   display: flex;

@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Viosimos - Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <style>
+    main {
+      max-width: 1100px;
+      margin: 0 auto 40px;
+      padding: 0 20px;
+    }
+
+    .dashboard-intro {
+      color: #2e7d32;
+      margin: 0 0 20px;
+    }
+
+    .dashboard-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 14px;
+    }
+
+    .action-btn {
+      padding: 9px 14px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+      font-size: 0.9em;
+    }
+
+    .action-btn:hover {
+      background-color: #388e3c;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background-color: #ffffff;
+      border: 1px solid #a5d6a7;
+      border-radius: 8px;
+      padding: 14px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 1em;
+      color: #1b5e20;
+    }
+
+    .metric-value {
+      font-size: 1.4em;
+      font-weight: 700;
+      color: #388e3c;
+      margin: 0;
+    }
+
+    .latest-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .latest-line {
+      margin: 6px 0;
+      color: #2e7d32;
+    }
+
+    .empty-note {
+      margin: 8px 0 0;
+      color: #607d8b;
+      font-style: italic;
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .chart-card {
+      background-color: #ffffff;
+      border: 1px solid #a5d6a7;
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .chart-card h3 {
+      margin: 0 0 10px;
+      color: #1b5e20;
+      font-size: 1em;
+    }
+
+    .chart-wrap {
+      min-height: 250px;
+      position: relative;
+    }
+
+    .chart-empty {
+      margin: 0;
+      color: #607d8b;
+      font-style: italic;
+    }
+
+    .comparison-section {
+      background-color: #ffffff;
+      border: 1px solid #a5d6a7;
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .comparison-section h3 {
+      margin: 0 0 10px;
+      color: #1b5e20;
+      font-size: 1em;
+    }
+
+    .monthly-summary-section {
+      margin-top: 22px;
+    }
+
+    .monthly-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 14px;
+    }
+
+    .summary-utility-card {
+      background-color: #ffffff;
+      border: 1px solid #a5d6a7;
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .summary-utility-card h3 {
+      margin: 0 0 10px;
+      color: #1b5e20;
+      font-size: 1em;
+    }
+
+    .month-extremes {
+      margin-bottom: 10px;
+      padding: 8px;
+      border-radius: 6px;
+      background-color: #f1f8e9;
+      border: 1px solid #c5e1a5;
+      color: #2e7d32;
+      font-size: 0.92em;
+    }
+
+    .summary-table-wrap {
+      overflow-x: auto;
+    }
+
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 300px;
+    }
+
+    .summary-table th,
+    .summary-table td {
+      border: 1px solid #a5d6a7;
+      padding: 8px;
+      text-align: center;
+      color: #2e7d32;
+      font-size: 0.9em;
+    }
+
+    .summary-table th {
+      background-color: #a5d6a7;
+      color: #1b5e20;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="viosimos.png" alt="Viosimos Logo" />
+    <h1>Viosimos</h1>
+  </header>
+
+  <main>
+    <div class="title-bar">
+      <h2>Dashboard</h2>
+      <div class="nav-buttons" aria-label="Page navigation">
+        <a class="nav-btn" href="index.html">Home</a>
+        <a class="nav-btn active" href="dashboard.html" aria-current="page">Dashboard</a>
+        <a class="nav-btn" href="energy.html">Energy</a>
+        <a class="nav-btn" href="gas.html">Gas</a>
+        <a class="nav-btn" href="water.html">Water</a>
+      </div>
+    </div>
+
+    <p class="dashboard-intro">Unified view of your utility costs and latest readings.</p>
+
+    <div class="dashboard-actions">
+      <button type="button" id="exportPdfBtn" class="action-btn">Export PDF Report</button>
+    </div>
+
+    <section class="summary-grid" aria-label="Dashboard summary">
+      <article class="card">
+        <h3>Total Energy Cost</h3>
+        <p class="metric-value" id="totalEnergyCost">€0.00</p>
+      </article>
+      <article class="card">
+        <h3>Total Gas Cost</h3>
+        <p class="metric-value" id="totalGasCost">€0.00</p>
+      </article>
+      <article class="card">
+        <h3>Total Water Cost</h3>
+        <p class="metric-value" id="totalWaterCost">€0.00</p>
+      </article>
+      <article class="card">
+        <h3>Combined Utility Cost</h3>
+        <p class="metric-value" id="combinedUtilityCost">€0.00</p>
+      </article>
+      <article class="card">
+        <h3>Total Number of Entries</h3>
+        <p class="metric-value" id="totalEntries">0</p>
+      </article>
+    </section>
+
+    <section>
+      <h2>Latest Readings</h2>
+      <div class="latest-grid">
+        <article class="card" id="latestEnergyCard" aria-label="Latest energy reading">
+          <h3>Energy</h3>
+          <div class="latest-content"></div>
+        </article>
+        <article class="card" id="latestGasCard" aria-label="Latest gas reading">
+          <h3>Gas</h3>
+          <div class="latest-content"></div>
+        </article>
+        <article class="card" id="latestWaterCard" aria-label="Latest water reading">
+          <h3>Water</h3>
+          <div class="latest-content"></div>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Monthly Utility Costs</h2>
+      <div class="charts-grid">
+        <article class="chart-card" aria-label="Monthly energy cost chart">
+          <h3>Monthly Energy Cost</h3>
+          <div class="chart-wrap">
+            <canvas id="energyMonthlyChart" role="img" aria-label="Monthly energy cost"></canvas>
+            <p id="energyMonthlyEmpty" class="chart-empty" style="display: none;">No energy data available yet.</p>
+          </div>
+        </article>
+        <article class="chart-card" aria-label="Monthly gas cost chart">
+          <h3>Monthly Gas Cost</h3>
+          <div class="chart-wrap">
+            <canvas id="gasMonthlyChart" role="img" aria-label="Monthly gas cost"></canvas>
+            <p id="gasMonthlyEmpty" class="chart-empty" style="display: none;">No gas data available yet.</p>
+          </div>
+        </article>
+        <article class="chart-card" aria-label="Monthly water cost chart">
+          <h3>Monthly Water Cost</h3>
+          <div class="chart-wrap">
+            <canvas id="waterMonthlyChart" role="img" aria-label="Monthly water cost"></canvas>
+            <p id="waterMonthlyEmpty" class="chart-empty" style="display: none;">No water data available yet.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="comparison-section" aria-label="Combined monthly comparison chart">
+      <h3>Monthly Cost Comparison (Energy vs Gas vs Water)</h3>
+      <div class="chart-wrap">
+        <canvas id="combinedMonthlyChart" role="img" aria-label="Combined monthly utility cost comparison"></canvas>
+        <p id="combinedMonthlyEmpty" class="chart-empty" style="display: none;">No utility data available yet.</p>
+      </div>
+    </section>
+
+    <section class="monthly-summary-section" aria-label="Monthly summaries">
+      <h2>Monthly Summaries</h2>
+      <div class="monthly-summary-grid">
+        <article class="summary-utility-card" aria-label="Energy monthly summary">
+          <h3>Energy Monthly Summary</h3>
+          <div id="energyMonthExtremes" class="month-extremes"></div>
+          <div class="summary-table-wrap">
+            <table class="summary-table">
+              <thead>
+                <tr>
+                  <th>Month</th>
+                  <th>Total Usage (kWh)</th>
+                  <th>Total Cost (€)</th>
+                  <th>Entries</th>
+                </tr>
+              </thead>
+              <tbody id="energyMonthlySummaryBody"></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="summary-utility-card" aria-label="Gas monthly summary">
+          <h3>Gas Monthly Summary</h3>
+          <div id="gasMonthExtremes" class="month-extremes"></div>
+          <div class="summary-table-wrap">
+            <table class="summary-table">
+              <thead>
+                <tr>
+                  <th>Month</th>
+                  <th>Total Usage (m3)</th>
+                  <th>Total Cost (€)</th>
+                  <th>Entries</th>
+                </tr>
+              </thead>
+              <tbody id="gasMonthlySummaryBody"></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="summary-utility-card" aria-label="Water monthly summary">
+          <h3>Water Monthly Summary</h3>
+          <div id="waterMonthExtremes" class="month-extremes"></div>
+          <div class="summary-table-wrap">
+            <table class="summary-table">
+              <thead>
+                <tr>
+                  <th>Month</th>
+                  <th>Total Usage (m3)</th>
+                  <th>Total Cost (€)</th>
+                  <th>Entries</th>
+                </tr>
+              </thead>
+              <tbody id="waterMonthlySummaryBody"></tbody>
+            </table>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Viosimos - Βιώσιμος<br />
+    Theocharis Anastopoulos © 2025
+  </footer>
+
+  <script>
+    const STORAGE_KEYS = {
+      energy: 'viosimos_energy_entries',
+      gas: 'viosimos_gas_entries',
+      water: 'viosimos_water_entries'
+    };
+
+    const UTILITY_META = {
+      energy: { label: 'Energy', unit: 'kWh', color: '#2e7d32' },
+      gas: { label: 'Gas', unit: 'm3', color: '#388e3c' },
+      water: { label: 'Water', unit: 'm3', color: '#66bb6a' }
+    };
+
+    const chartInstances = {};
+    const reportState = {
+      summary: {
+        energyCost: 0,
+        gasCost: 0,
+        waterCost: 0,
+        combinedCost: 0,
+        totalEntries: 0
+      },
+      monthly: {
+        energy: [],
+        gas: [],
+        water: []
+      },
+      latest: {
+        energy: null,
+        gas: null,
+        water: null
+      }
+    };
+
+    function toNumberOrZero(value) {
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    function formatCurrency(value) {
+      return '€' + Number(value || 0).toFixed(2);
+    }
+
+    function formatNumber(value, digits = 2) {
+      return Number(value || 0).toFixed(digits);
+    }
+
+    function formatDate(value) {
+      if (!value) return '-';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value;
+      return date.toISOString().slice(0, 10);
+    }
+
+    function monthKey(dateString) {
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return null;
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      return year + '-' + month;
+    }
+
+    async function loadEntriesByKey(storageKey) {
+      try {
+        const stored = await localforage.getItem(storageKey);
+        if (!Array.isArray(stored)) return [];
+
+        return stored
+          .map(entry => ({
+            location: String(entry.location || '').trim(),
+            meterReading: toNumberOrZero(entry.meterReading),
+            tariff: toNumberOrZero(entry.tariff),
+            date: entry.date
+          }))
+          .filter(entry => entry.date && monthKey(entry.date))
+          .sort((a, b) => new Date(a.date) - new Date(b.date));
+      } catch (error) {
+        console.error('Error loading entries for key:', storageKey, error);
+        return [];
+      }
+    }
+
+    function calculateEntryMetrics(entries) {
+      let previousReading = null;
+      let totalCost = 0;
+      const metrics = [];
+
+      entries.forEach((entry, index) => {
+        let usage = 0;
+        let cost = 0;
+
+        if (previousReading !== null) {
+          usage = entry.meterReading - previousReading;
+          if (usage < 0) usage = 0;
+          cost = usage * entry.tariff;
+        }
+
+        if (index === 0) {
+          usage = 0;
+          cost = 0;
+        }
+
+        totalCost += cost;
+        metrics.push({ ...entry, usage, cost });
+        previousReading = entry.meterReading;
+      });
+
+      return {
+        metrics,
+        totalCost
+      };
+    }
+
+    function setSummaryValues(summary) {
+      document.getElementById('totalEnergyCost').textContent = formatCurrency(summary.energyCost);
+      document.getElementById('totalGasCost').textContent = formatCurrency(summary.gasCost);
+      document.getElementById('totalWaterCost').textContent = formatCurrency(summary.waterCost);
+      document.getElementById('combinedUtilityCost').textContent = formatCurrency(summary.combinedCost);
+      document.getElementById('totalEntries').textContent = String(summary.totalEntries);
+    }
+
+    function renderLatestCard(cardId, utilityName, unit, latestEntry) {
+      const card = document.getElementById(cardId);
+      const content = card.querySelector('.latest-content');
+
+      if (!latestEntry) {
+        content.innerHTML = '<p class="empty-note">No ' + utilityName.toLowerCase() + ' entries available yet.</p>';
+        return;
+      }
+
+      content.innerHTML =
+        '<p class="latest-line"><strong>Date:</strong> ' + formatDate(latestEntry.date) + '</p>' +
+        '<p class="latest-line"><strong>Location:</strong> ' + (latestEntry.location || '-') + '</p>' +
+        '<p class="latest-line"><strong>Reading:</strong> ' + formatNumber(latestEntry.meterReading) + ' ' + unit + '</p>' +
+        '<p class="latest-line"><strong>Usage:</strong> ' + formatNumber(latestEntry.usage) + ' ' + unit + '</p>' +
+        '<p class="latest-line"><strong>Cost:</strong> ' + formatCurrency(latestEntry.cost) + '</p>';
+    }
+
+    function aggregateMonthlySummary(metrics) {
+      const monthlyMap = new Map();
+
+      metrics.forEach(entry => {
+        const key = monthKey(entry.date);
+        if (!key) return;
+
+        if (!monthlyMap.has(key)) {
+          monthlyMap.set(key, {
+            month: key,
+            totalUsage: 0,
+            totalCost: 0,
+            entries: 0,
+            averageCostPerEntry: 0
+          });
+        }
+
+        const row = monthlyMap.get(key);
+        row.totalUsage += Math.max(0, toNumberOrZero(entry.usage));
+        row.totalCost += Math.max(0, toNumberOrZero(entry.cost));
+        row.entries += 1;
+      });
+
+      return Array.from(monthlyMap.values())
+        .sort((a, b) => a.month.localeCompare(b.month))
+        .map(row => ({
+          ...row,
+          averageCostPerEntry: row.entries > 0 ? row.totalCost / row.entries : 0
+        }));
+    }
+
+    function getBestAndWorstMonth(monthlySummary) {
+      if (!monthlySummary.length) {
+        return { best: null, worst: null };
+      }
+
+      let best = monthlySummary[0];
+      let worst = monthlySummary[0];
+
+      monthlySummary.forEach(row => {
+        if (row.totalCost > best.totalCost) {
+          best = row;
+        }
+        if (row.totalCost < worst.totalCost) {
+          worst = row;
+        }
+      });
+
+      return { best, worst };
+    }
+
+    function renderMonthlySummaryTable(options) {
+      const body = document.getElementById(options.bodyId);
+      const extremes = document.getElementById(options.extremesId);
+      body.innerHTML = '';
+
+      if (!options.monthlySummary.length) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td colspan="4">No data available.</td>';
+        body.appendChild(tr);
+        extremes.textContent = 'No month summary available yet.';
+        return;
+      }
+
+      const bestWorst = getBestAndWorstMonth(options.monthlySummary);
+      extremes.innerHTML =
+        '<strong>Highest-cost month:</strong> ' + bestWorst.best.month + ' (' + formatCurrency(bestWorst.best.totalCost) + ')<br>' +
+        '<strong>Lowest-cost month:</strong> ' + bestWorst.worst.month + ' (' + formatCurrency(bestWorst.worst.totalCost) + ')';
+
+      options.monthlySummary.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td>' + row.month + '</td>' +
+          '<td>' + formatNumber(row.totalUsage) + ' ' + options.unit + '</td>' +
+          '<td>' + formatCurrency(row.totalCost) + '</td>' +
+          '<td>' + String(row.entries) + '</td>';
+        body.appendChild(tr);
+      });
+    }
+
+    function getCurrentDateStamp() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function getReportFilename() {
+      return 'viosimos_report_' + getCurrentDateStamp() + '.pdf';
+    }
+
+    function getPdfDoc() {
+      if (!window.jspdf || !window.jspdf.jsPDF) {
+        throw new Error('PDF library is unavailable. Please reload and try again.');
+      }
+      return new window.jspdf.jsPDF({ unit: 'pt', format: 'a4' });
+    }
+
+    function getChartImageData(canvasId) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas || canvas.style.display === 'none') {
+        return null;
+      }
+      try {
+        return canvas.toDataURL('image/png');
+      } catch (error) {
+        console.warn('Could not capture chart image for ' + canvasId, error);
+        return null;
+      }
+    }
+
+    function exportPdfReport() {
+      try {
+        const doc = getPdfDoc();
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const left = 40;
+        const right = pageWidth - 40;
+        const contentWidth = right - left;
+        let y = 44;
+
+        function addPageIfNeeded(requiredSpace) {
+          if (y + requiredSpace > pageHeight - 40) {
+            doc.addPage();
+            y = 44;
+          }
+        }
+
+        function addHeading(text) {
+          addPageIfNeeded(30);
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(14);
+          doc.text(text, left, y);
+          y += 20;
+        }
+
+        function addBodyLine(text) {
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(11);
+          const lines = doc.splitTextToSize(String(text), contentWidth);
+          addPageIfNeeded(lines.length * 14 + 2);
+          doc.text(lines, left, y);
+          y += lines.length * 14;
+        }
+
+        function addSpacing(value = 8) {
+          y += value;
+        }
+
+        function addMonthlySummaryToPdf(title, unit, rows) {
+          addHeading(title);
+          if (!rows.length) {
+            addBodyLine('No data available.');
+            addSpacing(6);
+            return;
+          }
+
+          const extremes = getBestAndWorstMonth(rows);
+          addBodyLine('Highest-cost month: ' + extremes.best.month + ' (' + formatCurrency(extremes.best.totalCost) + ')');
+          addBodyLine('Lowest-cost month: ' + extremes.worst.month + ' (' + formatCurrency(extremes.worst.totalCost) + ')');
+          addSpacing(4);
+
+          rows.forEach(row => {
+            addBodyLine(
+              row.month +
+              ' | Usage: ' + formatNumber(row.totalUsage) + ' ' + unit +
+              ' | Cost: ' + formatCurrency(row.totalCost) +
+              ' | Entries: ' + row.entries +
+              ' | Avg/Entry: ' + formatCurrency(row.averageCostPerEntry)
+            );
+          });
+          addSpacing(8);
+        }
+
+        function addLatestReadingToPdf(label, unit, entry) {
+          addHeading('Latest ' + label + ' Reading');
+          if (!entry) {
+            addBodyLine('No data available.');
+            addSpacing(6);
+            return;
+          }
+
+          addBodyLine('Date: ' + formatDate(entry.date));
+          addBodyLine('Location: ' + (entry.location || '-'));
+          addBodyLine('Reading: ' + formatNumber(entry.meterReading) + ' ' + unit);
+          addBodyLine('Usage: ' + formatNumber(entry.usage) + ' ' + unit);
+          addBodyLine('Cost: ' + formatCurrency(entry.cost));
+          addSpacing(8);
+        }
+
+        function addChartImage(title, canvasId) {
+          addHeading(title);
+          const imageData = getChartImageData(canvasId);
+          if (!imageData) {
+            addBodyLine('Chart image unavailable.');
+            addSpacing(6);
+            return;
+          }
+
+          const chartWidth = contentWidth;
+          const chartHeight = 190;
+          addPageIfNeeded(chartHeight + 8);
+          doc.addImage(imageData, 'PNG', left, y, chartWidth, chartHeight);
+          y += chartHeight + 8;
+        }
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(18);
+        doc.text('Viosimos Utility Summary Report', left, y);
+        y += 22;
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(11);
+        doc.text('Generated on: ' + getCurrentDateStamp(), left, y);
+        y += 16;
+        doc.text('Total entries: ' + reportState.summary.totalEntries, left, y);
+        y += 20;
+
+        addHeading('Summary Totals');
+        addBodyLine('Total Energy Cost: ' + formatCurrency(reportState.summary.energyCost));
+        addBodyLine('Total Gas Cost: ' + formatCurrency(reportState.summary.gasCost));
+        addBodyLine('Total Water Cost: ' + formatCurrency(reportState.summary.waterCost));
+        addBodyLine('Combined Utility Cost: ' + formatCurrency(reportState.summary.combinedCost));
+        addSpacing(8);
+
+        addLatestReadingToPdf('Energy', 'kWh', reportState.latest.energy);
+        addLatestReadingToPdf('Gas', 'm3', reportState.latest.gas);
+        addLatestReadingToPdf('Water', 'm3', reportState.latest.water);
+
+        addMonthlySummaryToPdf('Energy Monthly Summary', 'kWh', reportState.monthly.energy);
+        addMonthlySummaryToPdf('Gas Monthly Summary', 'm3', reportState.monthly.gas);
+        addMonthlySummaryToPdf('Water Monthly Summary', 'm3', reportState.monthly.water);
+
+        addChartImage('Monthly Energy Cost Chart', 'energyMonthlyChart');
+        addChartImage('Monthly Gas Cost Chart', 'gasMonthlyChart');
+        addChartImage('Monthly Water Cost Chart', 'waterMonthlyChart');
+        addChartImage('Combined Monthly Comparison Chart', 'combinedMonthlyChart');
+
+        doc.save(getReportFilename());
+      } catch (error) {
+        console.error('Error generating PDF report:', error);
+        alert(error.message || 'Failed to export PDF report. Please try again.');
+      }
+    }
+
+    function buildSeries(monthlySummary) {
+      return {
+        labels: monthlySummary.map(item => item.month),
+        values: monthlySummary.map(item => Number(item.totalCost.toFixed(2)))
+      };
+    }
+
+    function destroyChartIfExists(chartId) {
+      if (chartInstances[chartId]) {
+        chartInstances[chartId].destroy();
+      }
+    }
+
+    function renderSingleUtilityChart(options) {
+      const canvas = document.getElementById(options.canvasId);
+      const empty = document.getElementById(options.emptyId);
+
+      if (!options.labels.length) {
+        canvas.style.display = 'none';
+        empty.style.display = 'block';
+        destroyChartIfExists(options.canvasId);
+        return;
+      }
+
+      canvas.style.display = 'block';
+      empty.style.display = 'none';
+      destroyChartIfExists(options.canvasId);
+
+      chartInstances[options.canvasId] = new Chart(canvas.getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: options.labels,
+          datasets: [{
+            label: options.label,
+            data: options.data,
+            borderColor: options.color,
+            backgroundColor: options.background,
+            fill: true,
+            tension: 0.3,
+            pointRadius: 4,
+            pointHoverRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { beginAtZero: true }
+          },
+          plugins: {
+            legend: { display: true }
+          }
+        }
+      });
+    }
+
+    function getCombinedLabels(seriesMap) {
+      const labels = new Set();
+      Object.values(seriesMap).forEach(series => {
+        series.labels.forEach(label => labels.add(label));
+      });
+      return Array.from(labels).sort((a, b) => a.localeCompare(b));
+    }
+
+    function valuesForLabels(series, labels) {
+      const lookup = new Map(series.labels.map((label, i) => [label, series.values[i]]));
+      return labels.map(label => lookup.get(label) || 0);
+    }
+
+    function renderCombinedChart(seriesMap) {
+      const canvasId = 'combinedMonthlyChart';
+      const canvas = document.getElementById(canvasId);
+      const empty = document.getElementById('combinedMonthlyEmpty');
+
+      const labels = getCombinedLabels(seriesMap);
+      if (!labels.length) {
+        canvas.style.display = 'none';
+        empty.style.display = 'block';
+        destroyChartIfExists(canvasId);
+        return;
+      }
+
+      canvas.style.display = 'block';
+      empty.style.display = 'none';
+      destroyChartIfExists(canvasId);
+
+      chartInstances[canvasId] = new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'Energy Cost',
+              data: valuesForLabels(seriesMap.energy, labels),
+              backgroundColor: 'rgba(46, 125, 50, 0.7)',
+              borderColor: '#2e7d32',
+              borderWidth: 1
+            },
+            {
+              label: 'Gas Cost',
+              data: valuesForLabels(seriesMap.gas, labels),
+              backgroundColor: 'rgba(56, 142, 60, 0.7)',
+              borderColor: '#388e3c',
+              borderWidth: 1
+            },
+            {
+              label: 'Water Cost',
+              data: valuesForLabels(seriesMap.water, labels),
+              backgroundColor: 'rgba(102, 187, 106, 0.7)',
+              borderColor: '#66bb6a',
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { beginAtZero: true }
+          },
+          plugins: {
+            legend: { display: true }
+          }
+        }
+      });
+    }
+
+    async function initDashboard() {
+      const [energyEntries, gasEntries, waterEntries] = await Promise.all([
+        loadEntriesByKey(STORAGE_KEYS.energy),
+        loadEntriesByKey(STORAGE_KEYS.gas),
+        loadEntriesByKey(STORAGE_KEYS.water)
+      ]);
+
+      const energyData = calculateEntryMetrics(energyEntries);
+      const gasData = calculateEntryMetrics(gasEntries);
+      const waterData = calculateEntryMetrics(waterEntries);
+
+      const summary = {
+        energyCost: energyData.totalCost,
+        gasCost: gasData.totalCost,
+        waterCost: waterData.totalCost,
+        combinedCost: energyData.totalCost + gasData.totalCost + waterData.totalCost,
+        totalEntries: energyEntries.length + gasEntries.length + waterEntries.length
+      };
+
+      setSummaryValues(summary);
+
+      renderLatestCard('latestEnergyCard', 'Energy', UTILITY_META.energy.unit, energyData.metrics[energyData.metrics.length - 1]);
+      renderLatestCard('latestGasCard', 'Gas', UTILITY_META.gas.unit, gasData.metrics[gasData.metrics.length - 1]);
+      renderLatestCard('latestWaterCard', 'Water', UTILITY_META.water.unit, waterData.metrics[waterData.metrics.length - 1]);
+
+      const energyMonthly = aggregateMonthlySummary(energyData.metrics);
+      const gasMonthly = aggregateMonthlySummary(gasData.metrics);
+      const waterMonthly = aggregateMonthlySummary(waterData.metrics);
+
+      const energySeries = buildSeries(energyMonthly);
+      const gasSeries = buildSeries(gasMonthly);
+      const waterSeries = buildSeries(waterMonthly);
+
+      renderSingleUtilityChart({
+        canvasId: 'energyMonthlyChart',
+        emptyId: 'energyMonthlyEmpty',
+        labels: energySeries.labels,
+        data: energySeries.values,
+        label: 'Energy Monthly Cost (€)',
+        color: '#2e7d32',
+        background: 'rgba(46, 125, 50, 0.2)'
+      });
+
+      renderSingleUtilityChart({
+        canvasId: 'gasMonthlyChart',
+        emptyId: 'gasMonthlyEmpty',
+        labels: gasSeries.labels,
+        data: gasSeries.values,
+        label: 'Gas Monthly Cost (€)',
+        color: '#388e3c',
+        background: 'rgba(56, 142, 60, 0.2)'
+      });
+
+      renderSingleUtilityChart({
+        canvasId: 'waterMonthlyChart',
+        emptyId: 'waterMonthlyEmpty',
+        labels: waterSeries.labels,
+        data: waterSeries.values,
+        label: 'Water Monthly Cost (€)',
+        color: '#66bb6a',
+        background: 'rgba(102, 187, 106, 0.2)'
+      });
+
+      renderCombinedChart({
+        energy: energySeries,
+        gas: gasSeries,
+        water: waterSeries
+      });
+
+      reportState.summary = summary;
+      reportState.monthly.energy = energyMonthly;
+      reportState.monthly.gas = gasMonthly;
+      reportState.monthly.water = waterMonthly;
+      reportState.latest.energy = energyData.metrics[energyData.metrics.length - 1] || null;
+      reportState.latest.gas = gasData.metrics[gasData.metrics.length - 1] || null;
+      reportState.latest.water = waterData.metrics[waterData.metrics.length - 1] || null;
+
+      renderMonthlySummaryTable({
+        bodyId: 'energyMonthlySummaryBody',
+        extremesId: 'energyMonthExtremes',
+        monthlySummary: energyMonthly,
+        unit: 'kWh'
+      });
+
+      renderMonthlySummaryTable({
+        bodyId: 'gasMonthlySummaryBody',
+        extremesId: 'gasMonthExtremes',
+        monthlySummary: gasMonthly,
+        unit: 'm3'
+      });
+
+      renderMonthlySummaryTable({
+        bodyId: 'waterMonthlySummaryBody',
+        extremesId: 'waterMonthExtremes',
+        monthlySummary: waterMonthly,
+        unit: 'm3'
+      });
+    }
+
+    document.getElementById('exportPdfBtn').addEventListener('click', exportPdfReport);
+    initDashboard();
+  </script>
+</body>
+</html>

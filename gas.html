@@ -14,29 +14,6 @@
       margin: 0 auto 40px;
       padding: 0 20px;
     }
-    .title-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-    .title-bar h2 {
-      margin: 0;
-      color: #1b5e20;
-    }
-    .switch-btn {
-      padding: 8px 14px;
-      background-color: #4caf50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: background-color 0.3s ease;
-    }
-    .switch-btn:hover {
-      background-color: #388e3c;
-    }
     form {
       display: flex;
       flex-wrap: wrap;
@@ -242,7 +219,13 @@
   <main>
     <div class="title-bar">
       <h2>Gas Input</h2>
-      <button class="switch-btn" onclick="location.href='energy.html'">Go to Energy</button>
+      <div class="nav-buttons" aria-label="Page navigation">
+        <a class="nav-btn" href="index.html">Home</a>
+        <a class="nav-btn" href="dashboard.html">Dashboard</a>
+        <a class="nav-btn" href="energy.html">Energy</a>
+        <a class="nav-btn active" href="gas.html" aria-current="page">Gas</a>
+        <a class="nav-btn" href="water.html">Water</a>
+      </div>
     </div>
 
     <form id="gasForm">
