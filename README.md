@@ -4,7 +4,7 @@
   <img src="viosimos.png" alt="Viosimos Logo" width="150" />
 </p>
 
-**Viosimos** (Βιώσιμος in Greek, meaning *Sustainable*) is a simple client-side web app to track your energy (electricity) and gas consumption. It helps you input meter readings, calculate usage and costs, visualize trends, and manage data locally or via export/import.
+**Viosimos** (Βιώσιμος in Greek, meaning *Sustainable*) is a simple client-side web app to track energy (electricity), gas, and water consumption. It helps you input meter readings, calculate usage and costs, visualize trends, and manage your utility data locally or via export/import.
 
 ---
 
